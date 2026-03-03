@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SwiftOrder.Api/SwiftOrder.Api.csproj" />
+    <Project Path="src/SwiftOrder.Application/SwiftOrder.Application.csproj" />
+    <Project Path="src/SwiftOrder.Domain/SwiftOrder.Domain.csproj" />
+    <Project Path="src/SwiftOrder.Infrastructure/SwiftOrder.Infrastructure.csproj" />
+    <Project Path="src/SwiftOrder.Worker/SwiftOrder.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SwiftOrder.IntegrationTests/SwiftOrder.IntegrationTests.csproj" />
+    <Project Path="tests/SwiftOrder.UnitTests/SwiftOrder.UnitTests.csproj" />
+  </Folder>
+</Solution>
