@@ -10,14 +10,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\Messaging\" />
-    <Folder Include="Abstractions\Persistence\" />
     <Folder Include="Common\" />
     <Folder Include="DTOs\Orders\" />
-    <Folder Include="DTOs\Products\" />
     <Folder Include="UseCases\Orders\" />
-    <Folder Include="UseCases\Products\" />
     <Folder Include="Validation\Orders\" />
-    <Folder Include="Validation\Products\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.1" />
