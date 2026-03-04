@@ -12,7 +12,7 @@ using SwiftOrder.Infrastructure.Persistence;
 namespace SwiftOrder.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260303212958_InitialCreate")]
+    [Migration("20260304024813_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

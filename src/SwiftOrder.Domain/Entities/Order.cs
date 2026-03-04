@@ -7,7 +7,7 @@ public class Order
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
 
-    public string OrderNumber { get; private set; } = string.Empty;
+    public string? OrderNumber { get; private set; }
 
     public string CustomerName { get; private set; } = string.Empty;
 
@@ -21,8 +21,7 @@ public class Order
 
     public DateTime? ConfirmedAt { get; private set; }
 
-    private readonly List<OrderItem> _items = new();
-    public IReadOnlyCollection<OrderItem> Items => _items.AsReadOnly();
+    public List<OrderItem> Items { get; private set; } = new();
 
     // For EF Core
     private Order() { }
@@ -37,6 +36,9 @@ public class Order
         if (string.IsNullOrWhiteSpace(orderNumber))
             throw new DomainException("OrderNumber is required.");
 
+        if (!string.IsNullOrWhiteSpace(OrderNumber))
+            throw new DomainException("OrderNumber is already set and cannot be changed.");
+
         OrderNumber = orderNumber.Trim();
     }
 
@@ -44,8 +46,29 @@ public class Order
     {
         EnsureCanEdit();
 
-        var newItem = new OrderItem(productId, productNameSnapshot, unitPrice, quantity);
-        _items.Add(newItem);
+        if (productId == Guid.Empty)
+            throw new DomainException("ProductId is required.");
+
+        if (string.IsNullOrWhiteSpace(productNameSnapshot))
+            throw new DomainException("Product name snapshot is required.");
+
+        if (unitPrice <= 0)
+            throw new DomainException("UnitPrice must be greater than zero.");
+
+        if (quantity <= 0)
+            throw new DomainException("Quantity must be greater than zero.");
+
+        // If the same product is added again, increase quantity instead of creating a duplicate line.
+        var existing = Items.FirstOrDefault(i => i.ProductId == productId && i.UnitPrice == unitPrice);
+        if (existing is not null)
+        {
+            existing.UpdateQuantity(existing.Quantity + quantity);
+        }
+        else
+        {
+            var newItem = new OrderItem(Id, productId, productNameSnapshot.Trim(), unitPrice, quantity);
+            Items.Add(newItem);
+        }
 
         RecalculateTotal();
     }
@@ -54,7 +77,7 @@ public class Order
     {
         EnsureCanEdit();
 
-        if (_items.Count == 0)
+        if (Items.Count == 0)
             throw new DomainException("Cannot submit an order without items.");
 
         Status = OrderStatus.Submitted;
@@ -71,8 +94,8 @@ public class Order
 
     public void Confirm()
     {
-        if (Status != OrderStatus.Processing && Status != OrderStatus.Submitted)
-            throw new DomainException("Only submitted/processing orders can be confirmed.");
+        if (Status != OrderStatus.Processing)
+            throw new DomainException("Only processing orders can be confirmed.");
 
         Status = OrderStatus.Confirmed;
         ConfirmedAt = DateTime.UtcNow;
@@ -80,8 +103,8 @@ public class Order
 
     public void Cancel()
     {
-        if (Status == OrderStatus.Confirmed)
-            throw new DomainException("Confirmed orders cannot be cancelled.");
+        if (Status == OrderStatus.Confirmed || Status == OrderStatus.Processing)
+            throw new DomainException("Processing/confirmed orders cannot be cancelled.");
 
         Status = OrderStatus.Cancelled;
     }
@@ -102,6 +125,6 @@ public class Order
 
     private void RecalculateTotal()
     {
-        TotalAmount = _items.Sum(i => i.LineTotal);
+        TotalAmount = Items.Sum(i => i.LineTotal);
     }
 }

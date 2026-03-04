@@ -46,9 +46,6 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
         builder.HasMany(o => o.Items)
             .WithOne()
             .HasForeignKey(i => i.OrderId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        builder.Navigation(o => o.Items)
-            .UsePropertyAccessMode(PropertyAccessMode.Field);
+            .OnDelete(DeleteBehavior.Cascade);     
     }
 }

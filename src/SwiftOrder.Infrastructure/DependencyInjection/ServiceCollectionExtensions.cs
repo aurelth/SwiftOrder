@@ -22,6 +22,8 @@ public static class ServiceCollectionExtensions
 
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+        services.AddScoped<IOrderItemWriter, OrderItemWriter>();
+
         return services;
     }
 }

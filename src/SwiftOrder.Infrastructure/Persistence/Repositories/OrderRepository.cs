@@ -21,6 +21,7 @@ public class OrderRepository : IOrderRepository
     public Task<Order?> GetByIdAsync(Guid id, CancellationToken ct)
     {
         return _db.Orders
+            .AsTracking()
             .Include(o => o.Items)
             .FirstOrDefaultAsync(o => o.Id == id, ct);
     }

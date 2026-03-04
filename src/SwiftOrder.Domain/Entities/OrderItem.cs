@@ -20,18 +20,32 @@ public class OrderItem
     // For EF Core
     private OrderItem() { }
 
-    public OrderItem(Guid productId, string productNameSnapshot, decimal unitPrice, int quantity)
+    public OrderItem(Guid orderId, Guid productId, string productNameSnapshot, decimal unitPrice, int quantity)
     {
+        if (orderId == Guid.Empty)
+            throw new DomainException("OrderId is required.");
         if (productId == Guid.Empty)
             throw new DomainException("ProductId is required.");
 
+        OrderId = orderId;
         ProductId = productId;
 
-        SetSnapshotName(productNameSnapshot);
-        SetUnitPrice(unitPrice);
-        SetQuantity(quantity);
+        if (string.IsNullOrWhiteSpace(productNameSnapshot))
+            throw new DomainException("Product name snapshot is required.");
 
-        RecalculateLineTotal();
+        ProductNameSnapshot = productNameSnapshot.Trim();
+
+        if (unitPrice <= 0)
+            throw new DomainException("UnitPrice must be greater than zero.");
+
+        UnitPrice = unitPrice;
+
+        if (quantity <= 0)
+            throw new DomainException("Quantity must be greater than zero.");
+
+        Quantity = quantity;
+
+        LineTotal = UnitPrice * Quantity;
     }
 
     public void UpdateQuantity(int quantity)
