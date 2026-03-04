@@ -9,7 +9,6 @@
     <ProjectReference Include="..\SwiftOrder.Domain\SwiftOrder.Domain.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Abstractions\Messaging\" />
     <Folder Include="Common\" />
   </ItemGroup>
   <ItemGroup>

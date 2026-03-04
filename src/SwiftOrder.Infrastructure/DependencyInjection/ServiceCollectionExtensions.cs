@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using SwiftOrder.Application.Abstractions.Messaging;
 using SwiftOrder.Application.Abstractions.Persistence;
+using SwiftOrder.Infrastructure.Messaging;
 using SwiftOrder.Infrastructure.Persistence;
 using SwiftOrder.Infrastructure.Persistence.Repositories;
 
@@ -23,6 +25,11 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         services.AddScoped<IOrderItemWriter, OrderItemWriter>();
+
+        services.AddOptions<RabbitMqOptions>()
+            .Bind(configuration.GetSection("RabbitMq"));
+
+        services.AddSingleton<IMessagePublisher, RabbitMqMessagePublisher>();
 
         return services;
     }
